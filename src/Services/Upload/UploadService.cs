@@ -21,6 +21,11 @@ public class UploadService : IUploadService
         _storage = storage ?? throw new ArgumentNullException(nameof(storage));
     }
 
+    /// <summary>
+    /// Reads the body of the request,
+    /// stores the data from the fields to a separate storage
+    /// and returns links to the loaded data.
+    /// </summary>
     public async Task<UploadResponseVm> UploadAsync(
         PipeReader reader, UploadRequestDto requestDto, CancellationToken cancellationToken = default)
     {
@@ -80,6 +85,10 @@ public class UploadService : IUploadService
         return vm;
     }
 
+    /// <summary>
+    /// Reads the body of the request
+    /// and adds chunks of data to the thread-safe blocking collection.
+    /// </summary>
     private static async Task ReadRequestBodyAsync(
         PipeReader reader, BlockingCollection<UploadChunk> requestChunks, UploadRequestDto requestDto, UploadResponseVm responseVm, CancellationToken cancellationToken = default)
     {
@@ -189,6 +198,11 @@ public class UploadService : IUploadService
         }
     }
 
+    /// <summary>
+    /// Takes chunks of data from a thread-safe blocking collection,
+    /// converts them from base64 format 
+    /// and adds to the thread-safe blocking collection.
+    /// </summary>
     private static Task DecodeRequestBody(
         BlockingCollection<UploadChunk> encodedChunks, BlockingCollection<UploadChunk> decodedChunks, CancellationToken cancellationToken = default)
     {
@@ -209,6 +223,10 @@ public class UploadService : IUploadService
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Takes chunks of data from a thread-safe blocking collection
+    /// and stores them in separate storage.
+    /// </summary>
     private static async Task UploadRequestBodyAsync(
         BlockingCollection<UploadChunk> requestChunks, IStorage storage, UploadRequestDto requestDto, UploadResponseVm responseVm, CancellationToken cancellationToken = default)
     {
