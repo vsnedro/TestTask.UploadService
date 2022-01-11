@@ -47,7 +47,7 @@ internal class CustomExceptionHandler
                 responseCode = HttpStatusCode.NoContent;
                 break;
 
-            case IOException:
+            default:
                 responseText = JsonSerializer.Serialize(new { error = exception.Message });
                 break;
         }
