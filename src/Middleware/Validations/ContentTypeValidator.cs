@@ -20,14 +20,16 @@ internal class ContentTypeValidator
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var contentType = context.Request.ContentType;
-        if (!string.IsNullOrEmpty(contentType) && !_options.Value.ContentTypes.Any(x => contentType.Contains(x)))
+        var acceptedTypes = _options.Value.ContentTypes;
+        if (acceptedTypes.Any())
         {
-            throw new ContentTypeValidationException();
+            var contentType = context.Request.ContentType;
+            if (string.IsNullOrEmpty(contentType) || !acceptedTypes.Any(x => contentType.Contains(x)))
+            {
+                throw new ContentTypeValidationException();
+            }
         }
-        else
-        {
-            await _next(context);
-        }
+
+        await _next(context);
     }
 }
